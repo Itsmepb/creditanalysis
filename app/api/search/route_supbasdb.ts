@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
 
     const id = entityId.toUpperCase().trim();
 
+    // Fetch entity from database
     const entityResult = await pool.query(
       `SELECT * FROM entity_master WHERE entity_id = $1`,
       [id]
@@ -72,6 +73,7 @@ export async function GET(req: NextRequest) {
 
     const row = entityResult.rows[0] as Record<string, string | null>;
 
+    // Build overview — only non-NULL metric columns
     const overview = Object.entries(METRIC_COLUMNS)
       .filter(([col]) => {
         const val = row[col];
@@ -83,6 +85,8 @@ export async function GET(req: NextRequest) {
         type:  getType(col, row[col] as string),
       }));
 
+    // Get distinct spreads for dropdown
+    // Format: "statement_year · spread_name"
     const spreadResult = await pool.query(
       `SELECT DISTINCT
          statement_year || ' · ' || spread_name AS "spreadLabel"
@@ -94,6 +98,7 @@ export async function GET(req: NextRequest) {
 
     const spreadCount = spreadResult.rows.length;
 
+    // Only show dropdown if more than 1 spread exists
     const filters =
       spreadCount > 1
         ? [

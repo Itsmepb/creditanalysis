@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ENTITIES } from "@/lib/data";
+import { DATA } from "@/lib/data";
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,17 +13,17 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const entity = ENTITIES[entityId.toUpperCase().trim()];
+    const record = DATA[entityId.toUpperCase().trim()];
 
-    if (!entity) {
+    if (!record) {
       return NextResponse.json(
-        { error: `Entity "${entityId}" not found. Try ENT-001 to ENT-005 or ENT-990.` },
+        { error: `Entity "${entityId}" not found.` },
         { status: 404 }
       );
     }
 
     await new Promise((r) => setTimeout(r, 300));
-    return NextResponse.json(entity);
+    return NextResponse.json(record.entity);
 
   } catch (error) {
     console.error("Search error:", error);

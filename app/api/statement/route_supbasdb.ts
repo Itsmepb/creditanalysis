@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     let result;
 
     if (!spreadLabel) {
+      // No filter → fetch first available spread
       result = await pool.query(
         `SELECT *
          FROM financial_statements
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
         [entityId]
       );
     } else {
+      // spreadLabel = "statement_year · spread_name"
       const separatorIndex = spreadLabel.indexOf(" · ");
       const statementYear  = spreadLabel.substring(0, separatorIndex).trim();
       const spreadName     = spreadLabel.substring(separatorIndex + 3).trim();
@@ -69,6 +71,8 @@ export async function POST(req: NextRequest) {
 
     const dbRows: DbRow[] = result.rows;
 
+    // Always start with Metric
+    // Only include columns with at least one non-NULL value
     const columns: { key: string; label: string }[] = [
       { key: "metric", label: "Metric" },
     ];
@@ -85,6 +89,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    // Build rows
     const rows = dbRows.map((dbRow) => {
       const tableRow: Record<string, string> = {
         metric: dbRow["metric"] ?? "—",

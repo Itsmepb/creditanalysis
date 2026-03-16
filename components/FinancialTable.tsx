@@ -13,32 +13,47 @@ const statusStyle: Record<string, React.CSSProperties> = {
   "Stable":           { color: "#16a34a", background: "#f0fdf4", border: "1px solid #bbf7d0"  },
   "Strong":           { color: "#059669", background: "#ecfdf5", border: "1px solid #a7f3d0"  },
   "Positive":         { color: "#0284c7", background: "#f0f9ff", border: "1px solid #bae6fd"  },
+  "Improving":        { color: "#16a34a", background: "#f0fdf4", border: "1px solid #bbf7d0"  },
+  "On Track":         { color: "#0284c7", background: "#f0f9ff", border: "1px solid #bae6fd"  },
+  "Unaudited":        { color: "#d97706", background: "#fffbeb", border: "1px solid #fde68a"  },
   "Refinance":        { color: "#ea580c", background: "#fff7ed", border: "1px solid #fed7aa"  },
   "Review Rate":      { color: "#d97706", background: "#fffbeb", border: "1px solid #fde68a"  },
   "Schedule Payment": { color: "#7c3aed", background: "#f5f3ff", border: "1px solid #ddd6fe"  },
   "Monitor":          { color: "#0284c7", background: "#f0f9ff", border: "1px solid #bae6fd"  },
 };
 
-export default function FinancialTable({ columns, rows }: { columns: Column[]; rows: Row[] }) {
+export default function FinancialTable({
+  columns,
+  rows,
+}: {
+  columns: Column[];
+  rows:    Row[];
+}) {
   if (!columns?.length || !rows?.length) return null;
 
   return (
     <div style={{
-      background: "#ffffff",
-      border: "1px solid #e2e8f0",
+      background:   "#ffffff",
+      border:       "1px solid #e2e8f0",
       borderRadius: "10px",
-      overflow: "hidden",
+      overflow:     "hidden",
     }}>
-      {/* Label row */}
+      {/* Header bar */}
       <div style={{
-        padding: "9px 16px",
-        background: "#f8fafc",
-        borderBottom: "1px solid #e2e8f0",
-        display: "flex",
+        padding:        "9px 16px",
+        background:     "#f8fafc",
+        borderBottom:   "1px solid #e2e8f0",
+        display:        "flex",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems:     "center",
       }}>
-        <span style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        <span style={{
+          fontSize:      "10px",
+          fontWeight:    700,
+          color:         "#94a3b8",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+        }}>
           Financial Statement
         </span>
         <span style={{ fontSize: "10px", color: "#cbd5e1" }}>
@@ -46,26 +61,27 @@ export default function FinancialTable({ columns, rows }: { columns: Column[]; r
         </span>
       </div>
 
+      {/* Table — scrolls horizontally for many columns */}
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
 
-          {/* Column headers — 100% dynamic from API / filter selection */}
+          {/* Column headers — 100% from JSON */}
           <thead>
             <tr style={{ background: "#f1f5f9" }}>
               {columns.map((col, i) => (
                 <th
                   key={col.key}
                   style={{
-                    padding: "9px 16px",
-                    textAlign: "left",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#475569",
+                    padding:       "10px 16px",
+                    textAlign:     "left",
+                    fontSize:      "11px",
+                    fontWeight:    700,
+                    color:         "#475569",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
-                    whiteSpace: "nowrap",
-                    borderBottom: "2px solid #e2e8f0",
-                    minWidth: i === 0 ? "160px" : "110px",
+                    whiteSpace:    "nowrap",
+                    borderBottom:  "2px solid #e2e8f0",
+                    minWidth:      i === 0 ? "160px" : "110px",
                   }}
                 >
                   {col.label}
@@ -74,35 +90,48 @@ export default function FinancialTable({ columns, rows }: { columns: Column[]; r
             </tr>
           </thead>
 
+          {/* Rows — 100% from JSON */}
           <tbody>
             {rows.map((row, ri) => (
               <tr
                 key={ri}
-                style={{ background: ri % 2 === 0 ? "#ffffff" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}
+                style={{
+                  background:   ri % 2 === 0 ? "#ffffff" : "#fafafa",
+                  borderBottom: "1px solid #f1f5f9",
+                }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#f0f9ff")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = ri % 2 === 0 ? "#ffffff" : "#fafafa")}
               >
                 {columns.map((col, ci) => {
-                  const raw = row[col.key];
-                  const val = raw !== undefined && raw !== null && String(raw).trim() !== "" ? String(raw) : "—";
-                  const isFirst = ci === 0;
-                  const badge   = statusStyle[val];
-                  const isPos   = !isFirst && val.startsWith("+");
-                  const isNeg   = !isFirst && val.startsWith("-");
+                  const raw   = row[col.key];
+                  const val   = raw !== undefined && raw !== null && String(raw).trim() !== "" ? String(raw) : "—";
+                  const first = ci === 0;
+                  const badge = statusStyle[val];
+                  const isPos = !first && val.startsWith("+");
+                  const isNeg = !first && val.startsWith("-");
 
                   return (
                     <td
                       key={col.key}
                       style={{
-                        padding: "9px 16px",
-                        fontSize: "12px",
-                        whiteSpace: "nowrap",
+                        padding:   "10px 16px",
+                        fontSize:  "12px",
+                        whiteSpace:"nowrap",
                       }}
                     >
-                      {isFirst ? (
-                        <span style={{ color: "#0f172a", fontWeight: 600 }}>{val}</span>
+                      {first ? (
+                        <span style={{ color: "#0f172a", fontWeight: 600 }}>
+                          {val}
+                        </span>
                       ) : badge ? (
-                        <span style={{ ...badge, padding: "2px 10px", borderRadius: "999px", fontSize: "11px", fontWeight: 600, display: "inline-block" }}>
+                        <span style={{
+                          ...badge,
+                          padding:      "2px 10px",
+                          borderRadius: "999px",
+                          fontSize:     "11px",
+                          fontWeight:   600,
+                          display:      "inline-block",
+                        }}>
                           {val}
                         </span>
                       ) : isPos ? (
