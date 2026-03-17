@@ -1,469 +1,436 @@
-export type OverviewLine = {
-  label: string;
-  value: string;
-  type:  "good" | "warn" | "bad";
-};
+export const ENTITY_DATA: Record<string, Record<string, unknown>> = {
 
-export type Filter = {
-  key:     string;
-  label:   string;
-  options: string[];
-};
-
-export type Column = {
-  key:   string;
-  label: string;
-};
-
-export type Row = Record<string, string>;
-
-export type Statement = {
-  columns: Column[];
-  rows:    Row[];
-};
-
-export type EntityData = {
-  entityId:   string;
-  entityName: string;
-  entityType: string;
-  industry:   string;
-  country:    string;
-  overview:   OverviewLine[];
-  filters:    Filter[];
-  statement?: Statement;
-};
-
-// ─────────────────────────────────────────────────────────
-// Full entity + statement data — all in JSON
-// columns and rows are 100% dynamic
-// UI renders exactly what is here — nothing hardcoded
-// ─────────────────────────────────────────────────────────
-
-export const DATA: Record<string, {
-  entity:     Omit<EntityData, "statement">;
-  statements: Record<string, Statement>;
-}> = {
-
-  // ── ENT-001 ──────────────────────────────────────────
-  // 2 overview lines
-  // 1 spread → no dropdown
-  // 5 columns
   "ENT-001": {
-    entity: {
-      entityId:   "ENT-001",
-      entityName: "Apex Global Corporation",
-      entityType: "Corporate",
-      industry:   "Technology",
-      country:    "United States",
-      overview: [
-        { label: "Credit Rating", value: "AA+",    type: "good" },
-        { label: "Risk Score",    value: "22/100", type: "good" },
+    entityId:     "ENT-001",
+    entityName:   "Apex Global Corporation",
+    entityType:   "Corporate",
+    industry:     "Technology",
+    country:      "United States",
+    creditRating: "AA+",
+    riskScore:    "22/100",
+    debtRatio:    "0.31",
+    revenueGrowth:"+14.2%",
+    ebitdaMargin: "32.8%",
+    overview: [
+      { label: "Credit Rating",  value: "AA+",    type: "good" },
+      { label: "Risk Score",     value: "22/100", type: "good" },
+      { label: "Debt Ratio",     value: "0.31",   type: "good" },
+      { label: "Revenue Growth", value: "+14.2%", type: "good" },
+      { label: "EBITDA Margin",  value: "32.8%",  type: "good" },
+    ],
+    table: {
+      columns: [
+        { key: "metric",   label: "Metric"     },
+        { key: "fy2024",   label: "FY 2024"    },
+        { key: "fy2023",   label: "FY 2023"    },
+        { key: "variance", label: "YoY Change" },
       ],
-      filters: [],
-    },
-    statements: {
-      "default": {
-        columns: [
-          { key: "metric",   label: "Metric"      },
-          { key: "fy2024",   label: "FY 2024"     },
-          { key: "fy2023",   label: "FY 2023"     },
-          { key: "fy2022",   label: "FY 2022"     },
-          { key: "variance", label: "YoY Change"  },
-          { key: "status",   label: "Status"      },
-        ],
-        rows: [
-          { metric: "Revenue",          fy2024: "$5.2M", fy2023: "$4.5M", fy2022: "$3.9M", variance: "+14.2%", status: "Above Benchmark" },
-          { metric: "EBITDA",           fy2024: "$1.7M", fy2023: "$1.5M", fy2022: "$1.2M", variance: "+19.4%", status: "Above Benchmark" },
-          { metric: "Net Income",       fy2024: "$1.0M", fy2023: "$0.8M", fy2022: "$0.7M", variance: "+20.3%", status: "Above Benchmark" },
-          { metric: "Total Assets",     fy2024: "$8.9M", fy2023: "$7.6M", fy2022: "$6.8M", variance: "+16.3%", status: "Above Benchmark" },
-          { metric: "Total Liabilities",fy2024: "$2.7M", fy2023: "$2.5M", fy2022: "$2.2M", variance: "+9.3%",  status: "Stable"          },
-          { metric: "Total Equity",     fy2024: "$6.1M", fy2023: "$5.1M", fy2022: "$4.5M", variance: "+19.8%", status: "Stable"          },
-        ],
-      },
+      rows: [
+        { metric: "Revenue",          fy2024: "$5.2M", fy2023: "$4.5M", variance: "+14.2%" },
+        { metric: "EBITDA",           fy2024: "$1.7M", fy2023: "$1.5M", variance: "+19.4%" },
+        { metric: "Net Income",       fy2024: "$1.0M", fy2023: "$0.8M", variance: "+20.3%" },
+        { metric: "Total Assets",     fy2024: "$8.9M", fy2023: "$7.6M", variance: "+16.3%" },
+        { metric: "Total Liabilities",fy2024: "$2.7M", fy2023: "$2.5M", variance: "+9.3%"  },
+        { metric: "Total Equity",     fy2024: "$6.1M", fy2023: "$5.1M", variance: "+19.8%" },
+      ],
     },
   },
 
-  // ── ENT-002 ──────────────────────────────────────────
-  // 6 overview lines
-  // 3 spreads → dropdown
-  // columns change per spread
   "ENT-002": {
-    entity: {
-      entityId:   "ENT-002",
-      entityName: "Meridian Capital Bank",
-      entityType: "Financial Institution",
-      industry:   "Banking",
-      country:    "United Kingdom",
-      overview: [
-        { label: "Credit Rating",    value: "BBB+",  type: "warn" },
-        { label: "Risk Score",       value: "45/100",type: "warn" },
-        { label: "NPL Ratio",        value: "5.0%",  type: "warn" },
-        { label: "Capital Adequacy", value: "18.2%", type: "good" },
-        { label: "ROE",              value: "7.4%",  type: "good" },
-        { label: "Loan to Deposit",  value: "84.1%", type: "warn" },
-      ],
-      filters: [
-        {
-          key:     "spread",
-          label:   "Financial Spread",
-          options: [
-            "2024 · Audited Accounts",
-            "2023 · Audited Accounts",
-            "2024 · Management Accounts",
-          ],
-        },
-      ],
+    entityId:              "ENT-002",
+    entityName:            "Meridian Capital Bank",
+    country:               "United Kingdom",
+    regulatoryTier:        "Tier 1",
+    nplRatio:              "5.0%",
+    capitalAdequacy:       "18.2%",
+    roe:                   "7.4%",
+    loanToDeposit:         "84.1%",
+    liquidityCoverageRatio:"142%",
+    stressTestResult:      "Pass",
+    overview: [
+      { label: "NPL Ratio",        value: "5.0%",  type: "warn" },
+      { label: "Capital Adequacy", value: "18.2%", type: "good" },
+      { label: "ROE",              value: "7.4%",  type: "good" },
+      { label: "Loan to Deposit",  value: "84.1%", type: "warn" },
+      { label: "Stress Test",      value: "Pass",  type: "good" },
+    ],
+    dropdown: {
+      label:       "Statement Period",
+      options:     ["2024 · Audited", "2023 · Audited", "2024 · Management"],
+      filterField: "period",
     },
-    statements: {
-      "2024 · Audited Accounts": {
-        columns: [
-          { key: "metric",   label: "Banking Metric" },
-          { key: "gbp",      label: "Value (GBP)"    },
-          { key: "usd",      label: "Value (USD)"    },
-          { key: "variance", label: "Variance %"     },
-          { key: "rating",   label: "Rating"         },
-        ],
-        rows: [
-          { metric: "Net Interest Income",  gbp: "£3.1M",  usd: "$3.9M",  variance: "+6.2%",  rating: "Strong" },
-          { metric: "Total Loans",          gbp: "£18.5M", usd: "$23.5M", variance: "+7.6%",  rating: "Stable" },
-          { metric: "Non-Performing Loans", gbp: "£0.9M",  usd: "$1.2M",  variance: "+19.5%", rating: "Watch"  },
-          { metric: "Total Deposits",       gbp: "£22.0M", usd: "$27.9M", variance: "+7.3%",  rating: "Strong" },
-          { metric: "Tier 1 Capital",       gbp: "£4.2M",  usd: "$5.3M",  variance: "+7.7%",  rating: "Strong" },
-          { metric: "Operating Expenses",   gbp: "£1.8M",  usd: "$2.3M",  variance: "+6.3%",  rating: "Stable" },
-        ],
-      },
-      "2023 · Audited Accounts": {
-        columns: [
-          { key: "metric",   label: "Banking Metric" },
-          { key: "gbp",      label: "Value (GBP)"    },
-          { key: "usd",      label: "Value (USD)"    },
-          { key: "variance", label: "Variance %"     },
-          { key: "rating",   label: "Rating"         },
-        ],
-        rows: [
-          { metric: "Net Interest Income",  gbp: "£2.9M",  usd: "$3.7M",  variance: "+5.1%", rating: "Stable" },
-          { metric: "Total Loans",          gbp: "£17.2M", usd: "$21.8M", variance: "+4.9%", rating: "Stable" },
-          { metric: "Non-Performing Loans", gbp: "£0.8M",  usd: "$1.0M",  variance: "+8.2%", rating: "Watch"  },
-          { metric: "Total Deposits",       gbp: "£20.5M", usd: "$26.0M", variance: "+5.1%", rating: "Stable" },
-          { metric: "Tier 1 Capital",       gbp: "£3.9M",  usd: "$5.0M",  variance: "+5.4%", rating: "Strong" },
-          { metric: "Operating Expenses",   gbp: "£1.7M",  usd: "$2.2M",  variance: "+4.8%", rating: "Stable" },
-        ],
-      },
-      "2024 · Management Accounts": {
-        columns: [
-          { key: "metric",   label: "Banking Metric" },
-          { key: "value",    label: "Value (GBP)"    },
-          { key: "variance", label: "Variance %"     },
-          { key: "notes",    label: "Notes"          },
-        ],
-        rows: [
-          { metric: "Net Interest Income", value: "£3.0M",  variance: "+3.4%", notes: "Unaudited estimate" },
-          { metric: "Total Loans",         value: "£18.1M", variance: "+5.2%", notes: "Unaudited estimate" },
-          { metric: "Operating Expenses",  value: "£1.7M",  variance: "+2.1%", notes: "Unaudited estimate" },
-        ],
-      },
+    table: {
+      columns: [
+        { key: "metric",   label: "Banking Metric" },
+        { key: "gbp",      label: "GBP Value"      },
+        { key: "usd",      label: "USD Value"      },
+        { key: "variance", label: "Variance %"     },
+        { key: "rating",   label: "Rating"         },
+      ],
+      rows: [
+        { period: "2024 · Audited",     metric: "Net Interest Income",  gbp: "£3.1M",  usd: "$3.9M",  variance: "+6.2%",  rating: "Strong" },
+        { period: "2024 · Audited",     metric: "Total Loans",          gbp: "£18.5M", usd: "$23.5M", variance: "+7.6%",  rating: "Stable" },
+        { period: "2024 · Audited",     metric: "Non-Performing Loans", gbp: "£0.9M",  usd: "$1.2M",  variance: "+19.5%", rating: "Watch"  },
+        { period: "2024 · Audited",     metric: "Total Deposits",       gbp: "£22.0M", usd: "$27.9M", variance: "+7.3%",  rating: "Strong" },
+        { period: "2024 · Audited",     metric: "Tier 1 Capital",       gbp: "£4.2M",  usd: "$5.3M",  variance: "+7.7%",  rating: "Strong" },
+        { period: "2023 · Audited",     metric: "Net Interest Income",  gbp: "£2.9M",  usd: "$3.7M",  variance: "+5.1%",  rating: "Stable" },
+        { period: "2023 · Audited",     metric: "Total Loans",          gbp: "£17.2M", usd: "$21.8M", variance: "+4.9%",  rating: "Stable" },
+        { period: "2023 · Audited",     metric: "Non-Performing Loans", gbp: "£0.8M",  usd: "$1.0M",  variance: "+8.2%",  rating: "Watch"  },
+        { period: "2023 · Audited",     metric: "Total Deposits",       gbp: "£20.5M", usd: "$26.0M", variance: "+5.1%",  rating: "Stable" },
+        { period: "2023 · Audited",     metric: "Tier 1 Capital",       gbp: "£3.9M",  usd: "$5.0M",  variance: "+5.4%",  rating: "Strong" },
+        { period: "2024 · Management",  metric: "Net Interest Income",  gbp: "£3.0M",  usd: "$3.8M",  variance: "+3.4%",  rating: "Stable" },
+        { period: "2024 · Management",  metric: "Total Loans",          gbp: "£18.1M", usd: "$23.0M", variance: "+5.2%",  rating: "Stable" },
+        { period: "2024 · Management",  metric: "Operating Expenses",   gbp: "£1.7M",  usd: "$2.2M",  variance: "+2.1%",  rating: "Stable" },
+      ],
     },
   },
 
-  // ── ENT-003 ──────────────────────────────────────────
-  // 10 overview lines
-  // 2 spreads → dropdown
-  // columns change per spread (4 cols vs 2 cols)
   "ENT-003": {
-    entity: {
-      entityId:   "ENT-003",
-      entityName: "Redstone SME Ventures",
-      entityType: "SME",
-      industry:   "Manufacturing",
-      country:    "India",
-      overview: [
-        { label: "Credit Rating",     value: "BB-",    type: "bad"  },
-        { label: "Risk Score",        value: "74/100", type: "bad"  },
-        { label: "Debt Ratio",        value: "0.76",   type: "bad"  },
-        { label: "Revenue Growth",    value: "-3.2%",  type: "bad"  },
-        { label: "EBITDA Margin",     value: "9.8%",   type: "warn" },
-        { label: "Interest Coverage", value: "1.8x",   type: "bad"  },
-        { label: "Current Ratio",     value: "0.91",   type: "bad"  },
-        { label: "Quick Ratio",       value: "0.62",   type: "bad"  },
-        { label: "Net Margin",        value: "1.5%",   type: "bad"  },
-        { label: "Asset Turnover",    value: "1.37x",  type: "warn" },
-      ],
-      filters: [
-        {
-          key:     "spread",
-          label:   "Financial Statement",
-          options: [
-            "2024 · Management Accounts",
-            "2024 · Unaudited",
-          ],
-        },
-      ],
+    entityId:          "ENT-003",
+    entityName:        "Redstone SME Ventures",
+    sector:            "Manufacturing",
+    location:          "Mumbai, India",
+    annualTurnover:    "₹850K",
+    outstandingLoans:  "₹620K",
+    collateralValue:   "₹480K",
+    directorCibilScore:"724",
+    yearsInOperation:  "8",
+    employeeCount:     "47",
+    overview: [
+      { label: "Annual Turnover",    value: "₹850K", type: "warn" },
+      { label: "Outstanding Loans",  value: "₹620K", type: "bad"  },
+      { label: "Collateral Value",   value: "₹480K", type: "warn" },
+      { label: "Director CIBIL",     value: "724",   type: "warn" },
+      { label: "Years In Operation", value: "8",     type: "good" },
+      { label: "Employee Count",     value: "47",    type: "warn" },
+    ],
+    dropdown: {
+      label:       "Financial Statement",
+      options:     ["2024 · Management", "2024 · Unaudited"],
+      filterField: "statement",
     },
-    statements: {
-      "2024 · Management Accounts": {
-        columns: [
-          { key: "metric",    label: "Metric"             },
-          { key: "actual",    label: "Actual"             },
-          { key: "benchmark", label: "Industry Benchmark" },
-          { key: "variance",  label: "Variance"           },
-          { key: "status",    label: "Status"             },
-        ],
-        rows: [
-          { metric: "Revenue",          actual: "₹850K", benchmark: "₹1.2M", variance: "-29.2%", status: "Below Benchmark" },
-          { metric: "EBITDA",           actual: "₹83K",  benchmark: "₹180K", variance: "-53.9%", status: "Below Benchmark" },
-          { metric: "Net Income",       actual: "₹12K",  benchmark: "₹96K",  variance: "-87.5%", status: "Critical"        },
-          { metric: "Total Assets",     actual: "₹620K", benchmark: "₹900K", variance: "-31.1%", status: "Below Benchmark" },
-          { metric: "Interest Expense", actual: "₹94K",  benchmark: "₹54K",  variance: "+74.1%", status: "Above Benchmark" },
-        ],
-      },
-      "2024 · Unaudited": {
-        columns: [
-          { key: "metric", label: "Metric" },
-          { key: "status", label: "Status" },
-        ],
-        rows: [
-          { metric: "Revenue",          status: "Critical"        },
-          { metric: "EBITDA",           status: "Critical"        },
-          { metric: "Net Income",       status: "Critical"        },
-          { metric: "Total Liabilities",status: "Above Benchmark" },
-          { metric: "Total Equity",     status: "Critical"        },
-          { metric: "Interest Expense", status: "Above Benchmark" },
-        ],
-      },
+    table: {
+      columns: [
+        { key: "metric",    label: "Metric"    },
+        { key: "actual",    label: "Actual"    },
+        { key: "benchmark", label: "Benchmark" },
+        { key: "variance",  label: "Variance"  },
+        { key: "status",    label: "Status"    },
+      ],
+      rows: [
+        { statement: "2024 · Management", metric: "Revenue",    actual: "₹850K", benchmark: "₹1.2M", variance: "-29.2%", status: "Below Benchmark" },
+        { statement: "2024 · Management", metric: "EBITDA",     actual: "₹83K",  benchmark: "₹180K", variance: "-53.9%", status: "Below Benchmark" },
+        { statement: "2024 · Management", metric: "Net Income", actual: "₹12K",  benchmark: "₹96K",  variance: "-87.5%", status: "Critical"        },
+        { statement: "2024 · Unaudited",  metric: "Revenue",    actual: "₹790K", benchmark: "₹1.2M", variance: "-34.2%", status: "Critical"        },
+        { statement: "2024 · Unaudited",  metric: "EBITDA",     actual: "₹71K",  benchmark: "₹180K", variance: "-60.6%", status: "Critical"        },
+        { statement: "2024 · Unaudited",  metric: "Net Income", actual: "₹8K",   benchmark: "₹96K",  variance: "-91.7%", status: "Critical"        },
+      ],
     },
   },
 
-  // ── ENT-004 ──────────────────────────────────────────
-  // 4 overview lines
-  // 3 spreads → dropdown
-  // columns change per year (5 → 4 → 3)
   "ENT-004": {
-    entity: {
-      entityId:   "ENT-004",
-      entityName: "Sovereign State of Aldoria",
-      entityType: "Sovereign",
-      industry:   "Government",
-      country:    "Aldoria",
-      overview: [
-        { label: "Credit Rating",  value: "A-",     type: "good" },
-        { label: "Risk Score",     value: "38/100", type: "good" },
-        { label: "GDP Growth",     value: "+3.8%",  type: "good" },
-        { label: "Fiscal Deficit", value: "-2.1%",  type: "warn" },
-      ],
-      filters: [
-        {
-          key:     "spread",
-          label:   "Year",
-          options: [
-            "2024 · IMF Assessment",
-            "2023 · IMF Assessment",
-            "2022 · IMF Assessment",
-          ],
-        },
-      ],
+    entityId:         "ENT-004",
+    sovereignName:    "Aldoria",
+    region:           "Eastern Europe",
+    gdpUSD:           "$285B",
+    gdpGrowthRate:    "+3.8%",
+    inflationRate:    "2.4%",
+    unemploymentRate: "4.1%",
+    publicDebtToGDP:  "52.4%",
+    foreignReserves:  "$42.5B",
+    creditOutlook:    "Stable",
+    currencyCode:     "ALD",
+    overview: [
+      { label: "GDP",            value: "$285B",  type: "good" },
+      { label: "GDP Growth",     value: "+3.8%",  type: "good" },
+      { label: "Inflation",      value: "2.4%",   type: "good" },
+      { label: "Unemployment",   value: "4.1%",   type: "warn" },
+      { label: "Debt to GDP",    value: "52.4%",  type: "warn" },
+      { label: "Credit Outlook", value: "Stable", type: "good" },
+    ],
+    dropdown: {
+      label:       "Assessment Year",
+      options:     ["2024 · IMF", "2023 · IMF", "2022 · IMF"],
+      filterField: "year",
     },
-    statements: {
-      "2024 · IMF Assessment": {
-        columns: [
-          { key: "metric",    label: "Sovereign Metric" },
-          { key: "actual",    label: "Actual 2024"      },
-          { key: "benchmark", label: "IMF Benchmark"    },
-          { key: "deviation", label: "Deviation"        },
-          { key: "outlook",   label: "Outlook"          },
-        ],
-        rows: [
-          { metric: "GDP (USD Bn)",           actual: "$285B",  benchmark: "$275B",  deviation: "+3.6%",  outlook: "Positive" },
-          { metric: "Government Revenue",     actual: "$68.4M", benchmark: "$65.0M", deviation: "+5.2%",  outlook: "Stable"   },
-          { metric: "Government Expenditure", actual: "$74.4M", benchmark: "$70.0M", deviation: "+6.3%",  outlook: "Watch"    },
-          { metric: "Public Debt",            actual: "$149M",  benchmark: "$140M",  deviation: "+6.7%",  outlook: "Watch"    },
-          { metric: "Foreign Reserves",       actual: "$42.5M", benchmark: "$38.0M", deviation: "+11.8%", outlook: "Positive" },
-        ],
-      },
-      "2023 · IMF Assessment": {
-        columns: [
-          { key: "metric",    label: "Sovereign Metric" },
-          { key: "actual",    label: "Actual 2023"      },
-          { key: "benchmark", label: "IMF Benchmark"    },
-          { key: "deviation", label: "Deviation"        },
-        ],
-        rows: [
-          { metric: "GDP (USD Bn)",           actual: "$274B",  benchmark: "$265B",  deviation: "+3.4%"  },
-          { metric: "Government Revenue",     actual: "$63.1M", benchmark: "$61.0M", deviation: "+3.4%"  },
-          { metric: "Government Expenditure", actual: "$68.9M", benchmark: "$66.0M", deviation: "+4.4%"  },
-          { metric: "Public Debt",            actual: "$140M",  benchmark: "$135M",  deviation: "+4.1%"  },
-          { metric: "Foreign Reserves",       actual: "$39.8M", benchmark: "$36.0M", deviation: "+10.6%" },
-        ],
-      },
-      "2022 · IMF Assessment": {
-        columns: [
-          { key: "metric",    label: "Sovereign Metric" },
-          { key: "actual",    label: "Actual 2022"      },
-          { key: "benchmark", label: "IMF Benchmark"    },
-        ],
-        rows: [
-          { metric: "GDP (USD Bn)",           actual: "$261B",  benchmark: "$255B"  },
-          { metric: "Government Revenue",     actual: "$58.7M", benchmark: "$57.0M" },
-          { metric: "Government Expenditure", actual: "$65.2M", benchmark: "$63.0M" },
-          { metric: "Public Debt",            actual: "$132M",  benchmark: "$130M"  },
-          { metric: "Foreign Reserves",       actual: "$36.5M", benchmark: "$34.0M" },
-        ],
-      },
+    table: {
+      columns: [
+        { key: "metric",    label: "Sovereign Metric" },
+        { key: "actual",    label: "Actual"           },
+        { key: "benchmark", label: "IMF Benchmark"    },
+        { key: "deviation", label: "Deviation"        },
+        { key: "outlook",   label: "Outlook"          },
+      ],
+      rows: [
+        { year: "2024 · IMF", metric: "GDP (USD Bn)",       actual: "$285B",  benchmark: "$275B",  deviation: "+3.6%",  outlook: "Positive" },
+        { year: "2024 · IMF", metric: "Government Revenue", actual: "$68.4M", benchmark: "$65.0M", deviation: "+5.2%",  outlook: "Stable"   },
+        { year: "2024 · IMF", metric: "Public Debt",        actual: "$149M",  benchmark: "$140M",  deviation: "+6.7%",  outlook: "Watch"    },
+        { year: "2024 · IMF", metric: "Foreign Reserves",   actual: "$42.5M", benchmark: "$38.0M", deviation: "+11.8%", outlook: "Positive" },
+        { year: "2023 · IMF", metric: "GDP (USD Bn)",       actual: "$274B",  benchmark: "$265B",  deviation: "+3.4%",  outlook: "Stable"   },
+        { year: "2023 · IMF", metric: "Government Revenue", actual: "$63.1M", benchmark: "$61.0M", deviation: "+3.4%",  outlook: "Stable"   },
+        { year: "2023 · IMF", metric: "Public Debt",        actual: "$140M",  benchmark: "$135M",  deviation: "+4.1%",  outlook: "Watch"    },
+        { year: "2023 · IMF", metric: "Foreign Reserves",   actual: "$39.8M", benchmark: "$36.0M", deviation: "+10.6%", outlook: "Positive" },
+        { year: "2022 · IMF", metric: "GDP (USD Bn)",       actual: "$261B",  benchmark: "$255B",  deviation: "+2.4%",  outlook: "Stable"   },
+        { year: "2022 · IMF", metric: "Government Revenue", actual: "$58.7M", benchmark: "$57.0M", deviation: "+3.0%",  outlook: "Stable"   },
+        { year: "2022 · IMF", metric: "Public Debt",        actual: "$132M",  benchmark: "$130M",  deviation: "+1.8%",  outlook: "Watch"    },
+      ],
     },
   },
 
-  // ── ENT-005 ──────────────────────────────────────────
-  // 8 overview lines
-  // 3 spreads → dropdown
-  // completely different columns per spread
   "ENT-005": {
-    entity: {
-      entityId:   "ENT-005",
-      entityName: "Orion Real Estate Fund",
-      entityType: "Corporate",
-      industry:   "Real Estate",
-      country:    "Singapore",
-      overview: [
-        { label: "Credit Rating",      value: "BBB",    type: "warn" },
-        { label: "Risk Score",         value: "55/100", type: "warn" },
-        { label: "Debt Ratio",         value: "0.62",   type: "warn" },
-        { label: "NAV Growth",         value: "+8.4%",  type: "good" },
-        { label: "Occupancy Rate",     value: "91.2%",  type: "good" },
-        { label: "Loan to Value",      value: "58.3%",  type: "warn" },
-        { label: "WALE",               value: "4.2 yrs",type: "good" },
-        { label: "Distribution Yield", value: "5.8%",   type: "good" },
-      ],
-      filters: [
-        {
-          key:     "spread",
-          label:   "Loan Spread",
-          options: [
-            "2024 · SIBOR+150bps",
-            "2024 · SIBOR+175bps",
-            "2024 · Fixed 5.2%",
-          ],
-        },
-      ],
+    entityId:          "ENT-005",
+    fundName:          "Orion Real Estate Fund III",
+    fundManager:       "Orion Capital Pte Ltd",
+    fundSize:          "S$1.2B",
+    nav:               "S$383M",
+    occupancyRate:     "91.2%",
+    wale:              "4.2 years",
+    distributionYield: "5.8%",
+    assetClass:        "Commercial Office",
+    geographyFocus:    "Asia Pacific",
+    overview: [
+      { label: "Fund Size",          value: "S$1.2B",  type: "good" },
+      { label: "NAV",                value: "S$383M",  type: "good" },
+      { label: "Occupancy Rate",     value: "91.2%",   type: "good" },
+      { label: "WALE",               value: "4.2 yrs", type: "good" },
+      { label: "Distribution Yield", value: "5.8%",    type: "good" },
+    ],
+    dropdown: {
+      label:       "Loan Spread",
+      options:     ["2024 · SIBOR+150bps", "2024 · SIBOR+175bps", "2024 · Fixed 5.2%"],
+      filterField: "spread",
     },
-    statements: {
-      "2024 · SIBOR+150bps": {
-        columns: [
-          { key: "metric",   label: "Portfolio Metric" },
-          { key: "sgd",      label: "SGD Value"        },
-          { key: "usd",      label: "USD Value"        },
-          { key: "maturity", label: "Maturity Date"    },
-          { key: "status",   label: "Status"           },
-        ],
-        rows: [
-          { metric: "Portfolio Value",    sgd: "S$920M",  usd: "$683M", maturity: "2027-06-30", status: "Active" },
-          { metric: "Rental Income",      sgd: "S$52.4M", usd: "$38.9M",maturity: "2027-06-30", status: "Active" },
-          { metric: "Net Asset Value",    sgd: "S$383M",  usd: "$284M", maturity: "2027-06-30", status: "Active" },
-          { metric: "Operating Cash Flow",sgd: "S$41.9M", usd: "$31.1M",maturity: "2027-06-30", status: "Active" },
-        ],
-      },
-      "2024 · SIBOR+175bps": {
-        columns: [
-          { key: "metric",   label: "Debt Metric"     },
-          { key: "sgd",      label: "SGD Value"       },
-          { key: "maturity", label: "Maturity Date"   },
-          { key: "status",   label: "Status"          },
-          { key: "action",   label: "Required Action" },
-        ],
-        rows: [
-          { metric: "Total Debt",      sgd: "S$536M",  maturity: "2026-03-31", status: "Refinance Due", action: "Refinance"        },
-          { metric: "Interest Expense",sgd: "S$26.8M", maturity: "2026-03-31", status: "Refinance Due", action: "Review Rate"       },
-          { metric: "Loan Repayment",  sgd: "S$45.0M", maturity: "2026-03-31", status: "Refinance Due", action: "Schedule Payment"  },
-          { metric: "Hedging Cost",    sgd: "S$3.2M",  maturity: "2026-03-31", status: "Watch",         action: "Monitor"           },
-        ],
-      },
-      "2024 · Fixed 5.2%": {
-        columns: [
-          { key: "metric",   label: "Fixed Rate Metric" },
-          { key: "sgd",      label: "SGD Value"         },
-          { key: "maturity", label: "Maturity Date"     },
-          { key: "rate",     label: "Rate"              },
-        ],
-        rows: [
-          { metric: "Fixed Rate Debt", sgd: "S$180M",  maturity: "2028-12-31", rate: "5.2%" },
-          { metric: "Annual Interest", sgd: "S$9.4M",  maturity: "2028-12-31", rate: "5.2%" },
-          { metric: "Amortization",    sgd: "S$12.0M", maturity: "2028-12-31", rate: "5.2%" },
-        ],
-      },
+    table: {
+      columns: [
+        { key: "metric",   label: "Portfolio Metric" },
+        { key: "sgd",      label: "SGD Value"        },
+        { key: "usd",      label: "USD Value"        },
+        { key: "maturity", label: "Maturity"         },
+        { key: "status",   label: "Status"           },
+      ],
+      rows: [
+        { spread: "2024 · SIBOR+150bps", metric: "Portfolio Value",     sgd: "S$920M",  usd: "$683M",  maturity: "2027-06-30", status: "Active"        },
+        { spread: "2024 · SIBOR+150bps", metric: "Rental Income",       sgd: "S$52.4M", usd: "$38.9M", maturity: "2027-06-30", status: "Active"        },
+        { spread: "2024 · SIBOR+150bps", metric: "Net Asset Value",     sgd: "S$383M",  usd: "$284M",  maturity: "2027-06-30", status: "Active"        },
+        { spread: "2024 · SIBOR+150bps", metric: "Operating Cash Flow", sgd: "S$41.9M", usd: "$31.1M", maturity: "2027-06-30", status: "Active"        },
+        { spread: "2024 · SIBOR+175bps", metric: "Total Debt",          sgd: "S$536M",  usd: "$398M",  maturity: "2026-03-31", status: "Refinance Due" },
+        { spread: "2024 · SIBOR+175bps", metric: "Interest Expense",    sgd: "S$26.8M", usd: "$19.9M", maturity: "2026-03-31", status: "Refinance Due" },
+        { spread: "2024 · SIBOR+175bps", metric: "Loan Repayment",      sgd: "S$45.0M", usd: "$33.4M", maturity: "2026-03-31", status: "Refinance Due" },
+        { spread: "2024 · Fixed 5.2%",   metric: "Fixed Rate Debt",     sgd: "S$180M",  usd: "$134M",  maturity: "2028-12-31", status: "Stable"        },
+        { spread: "2024 · Fixed 5.2%",   metric: "Annual Interest",     sgd: "S$9.4M",  usd: "$7.0M",  maturity: "2028-12-31", status: "Stable"        },
+        { spread: "2024 · Fixed 5.2%",   metric: "Amortization",        sgd: "S$12.0M", usd: "$8.9M",  maturity: "2028-12-31", status: "Stable"        },
+      ],
     },
   },
 
-  // ── ENT-990 ──────────────────────────────────────────
-  // 4 overview lines
-  // 3 spreads → dropdown
-  // columns change per spread
-  "ENT-990": {
-    entity: {
-      entityId:   "ENT-990",
-      entityName: "Nordic Health Sciences Ltd",
-      entityType: "Corporate",
-      industry:   "Healthcare",
-      country:    "Denmark",
-      overview: [
-        { label: "Credit Rating",  value: "A-",     type: "good" },
-        { label: "Risk Score",     value: "35/100", type: "good" },
-        { label: "Debt Ratio",     value: "0.42",   type: "warn" },
-        { label: "Revenue Growth", value: "+11.8%", type: "good" },
+  "ENT-006": {
+    entityId:                 "ENT-006",
+    hospitalName:             "MedCore Diagnostics AG",
+    licenseNumber:            "DE-MED-2019-4821",
+    accreditation:            "JCI Gold Seal",
+    bedCapacity:              "1,240",
+    occupancyRate:            "87.4%",
+    patientVolume2024:        "142,000",
+    revenuePerBed:            "€420/day",
+    debtServiceCoverageRatio: "2.4x",
+    overview: [
+      { label: "Bed Capacity",    value: "1,240",    type: "good" },
+      { label: "Occupancy Rate",  value: "87.4%",    type: "good" },
+      { label: "Patient Volume",  value: "142,000",  type: "good" },
+      { label: "Revenue Per Bed", value: "€420/day", type: "good" },
+      { label: "DSCR",            value: "2.4x",     type: "good" },
+    ],
+    table: {
+      columns: [
+        { key: "metric",     label: "Healthcare Metric" },
+        { key: "eur",        label: "EUR (M)"           },
+        { key: "prior_year", label: "Prior Year"        },
+        { key: "yoy",        label: "YoY Growth"        },
+        { key: "rd_contrib", label: "R&D %"             },
       ],
-      filters: [
-        {
-          key:     "spread",
-          label:   "Period",
-          options: [
-            "FY 2024 · Annual Report",
-            "FY 2023 · Annual Report",
-            "Q1 2024 · Quarterly Report",
-          ],
-        },
+      rows: [
+        { metric: "Total Revenue",    eur: "€842M", prior_year: "€690M", yoy: "+22.1%", rd_contrib: "18.4%" },
+        { metric: "Diagnostics Div",  eur: "€521M", prior_year: "€418M", yoy: "+24.6%", rd_contrib: "21.2%" },
+        { metric: "R&D Expenditure",  eur: "€155M", prior_year: "€127M", yoy: "+22.0%", rd_contrib: "100%"  },
+        { metric: "Operating Profit", eur: "€263M", prior_year: "€198M", yoy: "+32.8%", rd_contrib: "N/A"   },
+        { metric: "Net Income",       eur: "€189M", prior_year: "€141M", yoy: "+34.0%", rd_contrib: "N/A"   },
       ],
     },
-    statements: {
-      "FY 2024 · Annual Report": {
-        columns: [
-          { key: "metric",     label: "Metric"      },
-          { key: "fy2024",     label: "FY 2024"     },
-          { key: "prior_year", label: "Prior Year"  },
-          { key: "change",     label: "YoY Change"  },
-          { key: "margin",     label: "Margin"      },
-          { key: "status",     label: "Status"      },
-        ],
-        rows: [
-          { metric: "Revenue",    fy2024: "$12.4M", prior_year: "$11.2M", change: "+11.8%", margin: "32.1%", status: "Above Benchmark" },
-          { metric: "EBITDA",     fy2024: "$3.1M",  prior_year: "$2.7M",  change: "+14.8%", margin: "25.0%", status: "Above Benchmark" },
-          { metric: "Net Income", fy2024: "$1.8M",  prior_year: "$1.5M",  change: "+20.0%", margin: "14.5%", status: "Above Benchmark" },
-          { metric: "Total Debt", fy2024: "$5.2M",  prior_year: "$5.8M",  change: "-10.3%", margin: "",      status: "Improving"        },
-        ],
-      },
-      "FY 2023 · Annual Report": {
-        columns: [
-          { key: "metric",  label: "Metric"     },
-          { key: "fy2023",  label: "FY 2023"    },
-          { key: "change",  label: "YoY Change" },
-          { key: "status",  label: "Status"     },
-        ],
-        rows: [
-          { metric: "Revenue",    fy2023: "$11.2M", change: "+8.7%", status: "Stable" },
-          { metric: "EBITDA",     fy2023: "$2.7M",  change: "+8.0%", status: "Stable" },
-          { metric: "Net Income", fy2023: "$1.5M",  change: "+7.1%", status: "Stable" },
-        ],
-      },
-      "Q1 2024 · Quarterly Report": {
-        columns: [
-          { key: "metric",     label: "Metric"      },
-          { key: "q1_value",   label: "Q1 Value"    },
-          { key: "annualised", label: "Annualised"  },
-          { key: "vs_budget",  label: "vs Budget"   },
-          { key: "status",     label: "Status"      },
-        ],
-        rows: [
-          { metric: "Revenue",       q1_value: "$3.2M", annualised: "$12.8M", vs_budget: "+2.4%", status: "On Track" },
-          { metric: "EBITDA",        q1_value: "$0.8M", annualised: "$3.2M",  vs_budget: "+1.8%", status: "On Track" },
-          { metric: "Operating Cost",q1_value: "$2.1M", annualised: "$8.4M",  vs_budget: "+5.2%", status: "Watch"    },
-        ],
-      },
+  },
+
+  "ENT-007": {
+    entityId:       "ENT-007",
+    companyName:    "Brasil Logistics Group SA",
+    cnpj:           "12.345.678/0001-99",
+    fleetSize:      "4,200 vehicles",
+    warehouseCount: "38 facilities",
+    onTimeDelivery: "88.7%",
+    fuelCostRatio:  "31.4%",
+    carbonEmissions:"142g/km",
+    esgRating:      "B+",
+    overview: [
+      { label: "Fleet Size",      value: "4,200",   type: "good" },
+      { label: "Warehouses",      value: "38",      type: "good" },
+      { label: "On-Time Delivery",value: "88.7%",   type: "warn" },
+      { label: "Fuel Cost Ratio", value: "31.4%",   type: "bad"  },
+      { label: "Carbon Emissions",value: "142g/km", type: "bad"  },
+      { label: "ESG Rating",      value: "B+",      type: "warn" },
+    ],
+    dropdown: {
+      label:       "Report Type",
+      options:     ["2024 · Operational", "2024 · Financial", "2024 · ESG"],
+      filterField: "report",
+    },
+    table: {
+      columns: [
+        { key: "metric",     label: "Metric"  },
+        { key: "value_2024", label: "2024"    },
+        { key: "value_2023", label: "2023"    },
+        { key: "target",     label: "Target"  },
+        { key: "trend",      label: "Trend"   },
+        { key: "status",     label: "Status"  },
+      ],
+      rows: [
+        { report: "2024 · Operational", metric: "Freight Tonnage",      value_2024: "4.2M tons",  value_2023: "3.9M tons",  target: "5.0M tons",  trend: "+6.2%",  status: "On Track" },
+        { report: "2024 · Operational", metric: "Fleet Utilisation",    value_2024: "90.9%",      value_2023: "88.4%",      target: "92.0%",      trend: "+2.5pp", status: "On Track" },
+        { report: "2024 · Operational", metric: "On-Time Delivery",     value_2024: "88.7%",      value_2023: "86.2%",      target: "92.0%",      trend: "+2.5pp", status: "Watch"    },
+        { report: "2024 · Operational", metric: "Last Mile Deliveries", value_2024: "9.2M pkgs",  value_2023: "8.1M pkgs",  target: "11.0M pkgs", trend: "+13.6%", status: "On Track" },
+        { report: "2024 · Financial",   metric: "Total Revenue",        value_2024: "R$2,840M",   value_2023: "R$2,593M",   target: "R$3,000M",   trend: "+9.4%",  status: "On Track" },
+        { report: "2024 · Financial",   metric: "EBITDA",               value_2024: "R$630M",     value_2023: "R$555M",     target: "R$680M",     trend: "+13.5%", status: "On Track" },
+        { report: "2024 · Financial",   metric: "Net Income",           value_2024: "R$180M",     value_2023: "R$165M",     target: "R$200M",     trend: "+8.9%",  status: "Watch"    },
+        { report: "2024 · Financial",   metric: "Operating Costs",      value_2024: "R$2,210M",   value_2023: "R$2,038M",   target: "R$2,320M",   trend: "+8.4%",  status: "On Track" },
+        { report: "2024 · ESG",         metric: "Carbon Emissions",     value_2024: "142g/km",    value_2023: "158g/km",    target: "120g/km",    trend: "-10.1%", status: "Watch"    },
+        { report: "2024 · ESG",         metric: "Renewable Energy",     value_2024: "28.4%",      value_2023: "19.2%",      target: "40.0%",      trend: "+9.2pp", status: "Watch"    },
+        { report: "2024 · ESG",         metric: "Waste Recycled",       value_2024: "74.2%",      value_2023: "68.1%",      target: "80.0%",      trend: "+6.1pp", status: "Watch"    },
+        { report: "2024 · ESG",         metric: "Local Hiring Rate",    value_2024: "87.3%",      value_2023: "84.1%",      target: "90.0%",      trend: "+3.2pp", status: "On Track" },
+      ],
+    },
+  },
+
+  "ENT-008": {
+    entityId:     "ENT-008",
+    fundName:     "Nordic Pension Fund AS",
+    aum:          "$4.2B",
+    fundingRatio: "112%",
+    memberCount:  "84,200",
+    sharpeRatio:  "1.84",
+    returns1Y:    "+9.2%",
+    returns5Y:    "+11.4%",
+    custodian:    "DNB Bank ASA",
+    overview: [
+      { label: "AUM",           value: "$4.2B",  type: "good" },
+      { label: "Funding Ratio", value: "112%",   type: "good" },
+      { label: "Members",       value: "84,200", type: "good" },
+      { label: "Sharpe Ratio",  value: "1.84",   type: "good" },
+      { label: "1Y Returns",    value: "+9.2%",  type: "good" },
+    ],
+    table: {
+      columns: [
+        { key: "asset_class", label: "Asset Class"  },
+        { key: "allocation",  label: "Allocation %" },
+        { key: "value",       label: "Value (USD)"  },
+        { key: "returns_1y",  label: "1Y Returns"   },
+        { key: "returns_5y",  label: "5Y Returns"   },
+        { key: "benchmark",   label: "Benchmark"    },
+      ],
+      rows: [
+        { asset_class: "Global Equities", allocation: "42%", value: "$1.76B", returns_1y: "+18.4%", returns_5y: "+12.2%", benchmark: "MSCI World"    },
+        { asset_class: "Fixed Income",    allocation: "28%", value: "$1.18B", returns_1y: "+4.2%",  returns_5y: "+3.8%",  benchmark: "Bloomberg Agg" },
+        { asset_class: "Real Estate",     allocation: "15%", value: "$630M",  returns_1y: "+8.1%",  returns_5y: "+7.4%",  benchmark: "MSCI RE"       },
+        { asset_class: "Private Equity",  allocation: "10%", value: "$420M",  returns_1y: "+22.1%", returns_5y: "+15.8%", benchmark: "Cambridge PE"  },
+        { asset_class: "Infrastructure",  allocation: "5%",  value: "$210M",  returns_1y: "+6.8%",  returns_5y: "+6.1%",  benchmark: "CPI+4%"        },
+      ],
+    },
+  },
+
+  "ENT-009": {
+    entityId:     "ENT-009",
+    startupName:  "FinTech Nexus Ltd",
+    stage:        "Series C",
+    founded:      "2019",
+    valuation:    "$480M",
+    arr:          "$21.2M",
+    burnRate:     "$2.1M/month",
+    runwayMonths: "18",
+    ltvCacRatio:  "4.2x",
+    churnRate:    "2.1%",
+    nps:          "72",
+    investors:    "Sequoia, Tiger Global, GIC",
+    overview: [
+      { label: "Stage",     value: "Series C",  type: "good" },
+      { label: "Valuation", value: "$480M",     type: "good" },
+      { label: "ARR",       value: "$21.2M",    type: "good" },
+      { label: "Burn Rate", value: "$2.1M/mo",  type: "warn" },
+      { label: "Runway",    value: "18 months", type: "warn" },
+      { label: "LTV/CAC",   value: "4.2x",      type: "good" },
+      { label: "Churn",     value: "2.1%",      type: "good" },
+      { label: "NPS",       value: "72",        type: "good" },
+    ],
+    table: {
+      columns: [
+        { key: "metric", label: "KPI Metric"  },
+        { key: "q1",     label: "Q1 2024"     },
+        { key: "q2",     label: "Q2 2024"     },
+        { key: "q3",     label: "Q3 2024"     },
+        { key: "q4",     label: "Q4 2024"     },
+        { key: "growth", label: "QoQ Growth"  },
+        { key: "target", label: "2025 Target" },
+      ],
+      rows: [
+        { metric: "ARR",          q1: "$8.2M", q2: "$11.4M", q3: "$15.8M", q4: "$21.2M", growth: "+34.2%", target: "$40M"  },
+        { metric: "Active Users", q1: "42K",   q2: "61K",    q3: "89K",    q4: "124K",   growth: "+39.3%", target: "250K"  },
+        { metric: "Gross Margin", q1: "61%",   q2: "64%",    q3: "67%",    q4: "71%",    growth: "+4pp",   target: "75%"   },
+        { metric: "CAC",          q1: "$124",  q2: "$108",   q3: "$94",    q4: "$82",    growth: "-12.8%", target: "$65"   },
+        { metric: "LTV/CAC",      q1: "2.8x",  q2: "3.1x",   q3: "3.6x",   q4: "4.2x",   growth: "+16.7%", target: "5.0x"  },
+        { metric: "Churn Rate",   q1: "3.8%",  q2: "3.2%",   q3: "2.6%",   q4: "2.1%",   growth: "-0.5pp", target: "1.5%"  },
+      ],
+    },
+  },
+
+  "ENT-010": {
+    entityId:           "ENT-010",
+    projectName:        "Thames Tideway Tunnel",
+    projectType:        "Infrastructure",
+    sponsor:            "Bazalgette Tunnel Ltd",
+    country:            "United Kingdom",
+    totalProjectCost:   "£4.2B",
+    equityStake:        "22%",
+    dscr:               "1.92x",
+    constructionStatus: "98% Complete",
+    projectedIRR:       "+9.8%",
+    moic:               "2.4x",
+    overview: [
+      { label: "Total Cost",    value: "£4.2B",        type: "good" },
+      { label: "Equity Stake",  value: "22%",          type: "good" },
+      { label: "DSCR",          value: "1.92x",        type: "good" },
+      { label: "Status",        value: "98% Complete", type: "good" },
+      { label: "Projected IRR", value: "+9.8%",        type: "good" },
+      { label: "MOIC",          value: "2.4x",         type: "good" },
+    ],
+    dropdown: {
+      label:       "Infrastructure Sector",
+      options:     ["2024 · Transport", "2024 · Energy"],
+      filterField: "sector",
+    },
+    table: {
+      columns: [
+        { key: "project", label: "Project"       },
+        { key: "country", label: "Country"       },
+        { key: "value",   label: "Asset Value"   },
+        { key: "equity",  label: "Equity Stake"  },
+        { key: "dscr",    label: "DSCR"          },
+        { key: "irr",     label: "Projected IRR" },
+        { key: "status",  label: "Status"        },
+      ],
+      rows: [
+        { sector: "2024 · Transport", project: "Thames Tideway",    country: "UK",      value: "$4.2B", equity: "22%", dscr: "1.92x", irr: "+9.8%",  status: "Active" },
+        { sector: "2024 · Transport", project: "A9 Motorway",       country: "Germany", value: "$2.8B", equity: "18%", dscr: "1.75x", irr: "+8.4%",  status: "Active" },
+        { sector: "2024 · Transport", project: "Heathrow T5 Ext",   country: "UK",      value: "$1.9B", equity: "31%", dscr: "2.10x", irr: "+12.1%", status: "Active" },
+        { sector: "2024 · Transport", project: "Berlin Metro Line",  country: "Germany", value: "$3.1B", equity: "15%", dscr: "1.68x", irr: "+7.9%",  status: "Watch"  },
+        { sector: "2024 · Energy",    project: "North Sea Wind Farm",country: "UK",      value: "$2.1B", equity: "28%", dscr: "1.88x", irr: "+11.4%", status: "Active" },
+        { sector: "2024 · Energy",    project: "Bavaria Solar Park", country: "Germany", value: "$0.8B", equity: "35%", dscr: "1.72x", irr: "+8.9%",  status: "Active" },
+        { sector: "2024 · Energy",    project: "Nordic Hydro",       country: "Norway",  value: "$3.4B", equity: "22%", dscr: "2.14x", irr: "+7.2%",  status: "Active" },
+      ],
     },
   },
 };
